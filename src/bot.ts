@@ -6,7 +6,12 @@ import type { StorageAdapter } from "grammy";
 // bot grows. Durable domain data must NOT live here — use the toolkit's
 // persistent storage (see AGENTS.md).
 export interface Session {
-  // example: step?: "awaiting_amount";
+  /** Ephemeral state for the chart-upload conversation. */
+  step?: "idle" | "awaiting_chart" | "awaiting_timeframe";
+  pendingChart?: {
+    imageHash: string;
+    timeframes?: ("M1" | "M5" | "M15")[];
+  };
 }
 
 export type Ctx = BotContext<Session>;
