@@ -1,29 +1,21 @@
 [
   {
-    "name": "Analyze chart",
+    "name": "Analyze chart opens the upload flow",
     "steps": [
       {
+        "send": { "callback": "analyze:start" },
         "expect": [
           {
             "method": "editMessageText",
-            "payload": {
-              "text": "Send a clear XAUUSD M1, M5, or M15 chart image. Include the price scale and recent candles."
-            }
+            "payload": { "text": "Kirim chart XAUUSD M1, M5, atau M15 yang jelas. Sertakan skala harga dan candle terbaru." }
           }
-        ],
-        "send": {
-          "callback": "analyze:start"
-        }
+        ]
       }
     ]
   },
   {
-    "name": "An M15 chart without verified confirmations gets no trade card",
+    "name": "An M15 chart without a confirmed setup returns an annotated review and guidance",
     "steps": [
-      {
-        "send": { "callback": "analyze:start" },
-        "expect": [{ "method": "editMessageText" }]
-      },
       {
         "send": {
           "update": {
@@ -40,43 +32,72 @@
         },
         "expect": [
           {
+            "method": "sendPhoto",
+            "payload": { "caption": "Analisis XAUUSD M15: elemen yang terdeteksi ditinjau. Tidak ada entry yang ditandai." }
+          },
+          {
             "method": "sendMessage",
-            "payload": {
-              "text": "No M15 setup was confirmed. A trade card is issued only when market bias, an order block, and an FVG can be verified from the chart."
-            }
+            "payload": { "text": "Market bias belum jelas, order block belum terkonfirmasi, tidak ada FVG yang valid.\nCoba unggah timeframe lain (M1/M5/M15) atau kirim gambar dengan area harga yang lebih lengkap." }
           }
         ]
       }
     ]
   },
   {
-    "name": "An ambiguous timeframe is resolved with buttons",
+    "name": "A confirmed M5 setup returns an Indonesian trade card with an entry annotation",
     "steps": [
-      {
-        "send": { "callback": "analyze:start" },
-        "expect": [{ "method": "editMessageText" }]
-      },
       {
         "send": {
           "update": {
-            "update_id": 2,
+            "update_id": 3,
             "message": {
-              "message_id": 2,
+              "message_id": 3,
+              "date": 0,
+              "chat": { "id": 1, "type": "private", "first_name": "Test" },
+              "from": { "id": 1, "is_bot": false, "first_name": "Test" },
+              "caption": "XAUUSD M5; bias=bull; ob=1974.20-1975.10; fvg=1973.80-1974.25; entry=1974.00-1974.30; method=limit",
+              "photo": [{ "file_id": "confirmed-chart", "file_unique_id": "confirmed-unique", "width": 100, "height": 100, "file_size": 100 }]
+            }
+          }
+        },
+        "expect": [
+          {
+            "method": "sendPhoto",
+            "payload": { "caption": "Anotasi XAUUSD M5: Entry A 1974.00 - 1974.30." }
+          },
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Bias Pasar: Bull\nOrder Block (M5): 1974.20 - 1975.10\nFVG: 1973.80 - 1974.25\nAlignment: YA\nEntry: Limit 1974.00 - 1974.30\nAlasan: Order block + FVG searah bias bullish — setup scalping M5." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "An ambiguous timeframe is resolved before analysis",
+    "steps": [
+      {
+        "send": {
+          "update": {
+            "update_id": 4,
+            "message": {
+              "message_id": 4,
               "date": 0,
               "chat": { "id": 1, "type": "private", "first_name": "Test" },
               "from": { "id": 1, "is_bot": false, "first_name": "Test" },
               "caption": "XAUUSD M5 and M15",
-              "photo": [{ "file_id": "chart-file", "file_unique_id": "chart-unique", "width": 100, "height": 100, "file_size": 100 }]
+              "photo": [{ "file_id": "ambiguous-chart", "file_unique_id": "ambiguous-unique", "width": 100, "height": 100, "file_size": 100 }]
             }
           }
         },
-        "expect": [{ "method": "sendMessage", "payload": { "text": "This image appears to include more than one timeframe. Choose the chart you want analyzed." } }]
+        "expect": [{ "method": "sendMessage", "payload": { "text": "Gambar ini memuat lebih dari satu timeframe. Pilih chart yang ingin dianalisis." } }]
       },
       {
         "send": { "callback": "analyze:timeframe:M5" },
         "expect": [
-          { "method": "editMessageText", "payload": { "text": "Checking the M5 chart against the required SMC confirmations." } },
-          { "method": "sendMessage", "payload": { "text": "No M5 setup was confirmed. A trade card is issued only when market bias, an order block, and an FVG can be verified from the chart." } }
+          { "method": "editMessageText", "payload": { "text": "Menganalisis chart M5 dengan konfirmasi SMC yang diperlukan." } },
+          { "method": "sendPhoto", "payload": { "caption": "Analisis XAUUSD M5: elemen yang terdeteksi ditinjau. Tidak ada entry yang ditandai." } },
+          { "method": "sendMessage", "payload": { "text": "Market bias belum jelas, order block belum terkonfirmasi, tidak ada FVG yang valid.\nCoba unggah timeframe lain (M1/M5/M15) atau kirim gambar dengan area harga yang lebih lengkap." } }
         ]
       }
     ]
