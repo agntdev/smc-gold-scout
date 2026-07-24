@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Analyze chart",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Initiate chart analysis flow"
+            }
+          }
+        ],
+        "send": {
+          "callback": "analyze:start"
+        }
+      }
+    ]
+  }
+]
