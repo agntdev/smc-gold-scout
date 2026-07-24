@@ -7,7 +7,7 @@
         "expect": [
           {
             "method": "sendMessage",
-            "payload": { "text": "👋 Welcome! Tap a button below to get started." }
+            "payload": { "text": "XAUUSD SMC Trade Analyzer\n\nSend a clean M1, M5, or M15 chart to check for aligned SMC confirmations." }
           }
         ]
       }
